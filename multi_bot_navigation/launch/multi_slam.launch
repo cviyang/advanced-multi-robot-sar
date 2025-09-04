@@ -1,0 +1,186 @@
+<launch>
+
+  <arg name="first"  default="robot1"/>
+  <arg name="second"  default="robot2"/>
+  <arg name="third"  default="robot3"/>
+
+  <group ns="$(arg first)">
+
+    <!-- TF坐标变换，基础参数 -->
+    <arg name="laser_frame_id" default="$(arg first)/laser_link" />
+    <arg name="global_frame_id" default="$(arg first)/map" />
+    <arg name="base_frame_id" default="$(arg first)/base_link" />
+    <arg name="odom_frame_id" default="$(arg first)/odom" />
+    <arg name="scan_topic1" default="/$(arg first)/scan" />
+    <arg name="map_topic" default="/$(arg first)/map" />
+
+    <!-- Gmapping建图算法，接收传感器数据建立地图 -->
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" clear_params="true">
+      <param name="map_frame" value="$(arg global_frame_id)" />
+      <param name="odom_frame" value="$(arg odom_frame_id)" />
+      <param name="base_frame" value="$(arg base_frame_id)" />
+        <param name="maxRange" value="30.0"/>
+        <param name="maxUrange" value="30.0"/>
+        <param name="sigma" value="0.05"/>
+        <param name="kernelSize" value="1"/>
+        <param name="lstep" value="0.05"/>
+        <param name="astep" value="0.05"/>
+        <param name="iterations" value="5"/>
+        <param name="lsigma" value="0.075"/>
+        <param name="ogain" value="3.0"/>
+        <param name="lskip" value="0"/>
+        <param name="srr" value="0.01"/>
+        <param name="srt" value="0.02"/>
+        <param name="str" value="0.01"/>
+        <param name="stt" value="0.02"/>
+        <param name="linearUpdate" value="0.5"/>
+        <param name="angularUpdate" value="0.436"/>
+        <param name="temporalUpdate" value="-1.0"/>
+        <param name="resampleThreshold" value="0.5"/>
+        <param name="particles" value="80"/>
+        <param name="xmin" value="-1.0"/>
+        <param name="ymin" value="-1.0"/>
+        <param name="xmax" value="1.0"/>
+        <param name="ymax" value="1.0"/>
+        <param name="delta" value="0.05"/>
+        <param name="llsamplerange" value="0.01"/>
+        <param name="llsamplestep" value="0.01"/>
+        <param name="lasamplerange" value="0.005"/>
+        <param name="lasamplestep" value="0.005"/>
+      <remap from="scan" to="$(arg scan_topic1)" />
+      <remap from="map" to="$(arg map_topic)" />
+    </node>
+
+    <!-- MoveBase路径规矩算法，控制机器人进行导航 -->
+    <include file="$(find multi_bot_navigation)/launch/multi_move_base.launch">
+      <arg name="global_frame_id" value="$(arg first)/map"/>
+      <arg name="odom_frame_id"   value="$(arg first)/odom"/>
+      <arg name="base_frame_id"   value="$(arg first)/base_link"/>
+      <arg name="odom_topic" value="/$(arg first)/odom" />
+      <arg name="laser_topic" value="/$(arg first)/scan" />
+      <arg name="cmd_vel_topic" value="/$(arg first)/cmd_vel" />
+    </include>
+
+  </group>
+
+  <group ns="$(arg second)">
+
+    <!-- TF坐标变换，基础参数 -->
+    <arg name="laser_frame_id" default="$(arg second)/laser_link" />
+    <arg name="global_frame_id" default="$(arg second)/map" />
+    <arg name="base_frame_id" default="$(arg second)/base_link" />
+    <arg name="odom_frame_id" default="$(arg second)/odom" />
+    <arg name="scan_topic2" default="/$(arg second)/scan" />
+    <arg name="map_topic" default="/$(arg second)/map" />
+
+    <!-- Gmapping建图算法，接收传感器数据建立地图 -->
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" clear_params="true">
+      <param name="map_frame" value="$(arg global_frame_id)" />
+      <param name="odom_frame" value="$(arg odom_frame_id)" />
+      <param name="base_frame" value="$(arg base_frame_id)" />
+        <param name="maxRange" value="30.0"/>
+        <param name="maxUrange" value="30.0"/>
+        <param name="sigma" value="0.05"/>
+        <param name="kernelSize" value="1"/>
+        <param name="lstep" value="0.05"/>
+        <param name="astep" value="0.05"/>
+        <param name="iterations" value="5"/>
+        <param name="lsigma" value="0.075"/>
+        <param name="ogain" value="3.0"/>
+        <param name="lskip" value="0"/>
+        <param name="srr" value="0.01"/>
+        <param name="srt" value="0.02"/>
+        <param name="str" value="0.01"/>
+        <param name="stt" value="0.02"/>
+        <param name="linearUpdate" value="0.5"/>
+        <param name="angularUpdate" value="0.436"/>
+        <param name="temporalUpdate" value="-1.0"/>
+        <param name="resampleThreshold" value="0.5"/>
+        <param name="particles" value="80"/>
+        <param name="xmin" value="-1.0"/>
+        <param name="ymin" value="-1.0"/>
+        <param name="xmax" value="1.0"/>
+        <param name="ymax" value="1.0"/>
+        <param name="delta" value="0.05"/>
+        <param name="llsamplerange" value="0.01"/>
+        <param name="llsamplestep" value="0.01"/>
+        <param name="lasamplerange" value="0.005"/>
+        <param name="lasamplestep" value="0.005"/>
+      <remap from="scan" to="$(arg scan_topic2)" />
+      <remap from="map" to="$(arg map_topic)" />
+    </node>
+
+    <!-- MoveBase路径规矩算法，控制机器人进行导航 -->
+    <include file="$(find multi_bot_navigation)/launch/multi_move_base2.launch">
+      <arg name="global_frame_id" value="$(arg second)/map"/>
+      <arg name="odom_frame_id"   value="$(arg second)/odom"/>
+      <arg name="base_frame_id"   value="$(arg second)/base_link"/>
+      <arg name="odom_topic" value="/$(arg second)/odom" />
+      <arg name="laser_topic" value="/$(arg second)/scan" />
+      <arg name="cmd_vel_topic" value="/$(arg second)/cmd_vel" />
+    </include>
+
+  </group>
+
+  <group ns="$(arg third)">
+
+    <!-- TF坐标变换，基础参数 -->
+    <arg name="laser_frame_id" default="$(arg third)/laser_link" />
+    <arg name="global_frame_id" default="$(arg third)/map" />
+    <arg name="base_frame_id" default="$(arg third)/base_link" />
+    <arg name="odom_frame_id" default="$(arg third)/odom" />
+    <arg name="scan_topic3" default="/$(arg third)/scan" />
+    <arg name="map_topic" default="/$(arg third)/map" />
+
+    <!-- Gmapping建图算法，接收传感器数据建立地图 -->
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" clear_params="true">
+      <param name="map_frame" value="$(arg global_frame_id)" />
+      <param name="odom_frame" value="$(arg odom_frame_id)" />
+      <param name="base_frame" value="$(arg base_frame_id)" />
+
+        <param name="maxRange" value="30.0"/>
+        <param name="maxUrange" value="30.0"/>
+        <param name="sigma" value="0.05"/>
+        <param name="kernelSize" value="1"/>
+        <param name="lstep" value="0.05"/>
+        <param name="astep" value="0.05"/>
+        <param name="iterations" value="5"/>
+        <param name="lsigma" value="0.075"/>
+        <param name="ogain" value="3.0"/>
+        <param name="lskip" value="0"/>
+        <param name="srr" value="0.01"/>
+        <param name="srt" value="0.02"/>
+        <param name="str" value="0.01"/>
+        <param name="stt" value="0.02"/>
+        <param name="linearUpdate" value="0.5"/>
+        <param name="angularUpdate" value="0.436"/>
+        <param name="temporalUpdate" value="-1.0"/>
+        <param name="resampleThreshold" value="0.5"/>
+        <param name="particles" value="80"/>
+        <param name="xmin" value="-1.0"/>
+        <param name="ymin" value="-1.0"/>
+        <param name="xmax" value="1.0"/>
+        <param name="ymax" value="1.0"/>
+        <param name="delta" value="0.05"/>
+        <param name="llsamplerange" value="0.01"/>
+        <param name="llsamplestep" value="0.01"/>
+        <param name="lasamplerange" value="0.005"/>
+        <param name="lasamplestep" value="0.005"/>
+
+      <remap from="scan" to="$(arg scan_topic3)" />
+      <remap from="map" to="$(arg map_topic)" />
+    </node>
+
+    <!-- MoveBase路径规矩算法，控制机器人进行导航 -->
+    <include file="$(find multi_bot_navigation)/launch/multi_move_base3.launch">
+      <arg name="global_frame_id" value="$(arg third)/map"/>
+      <arg name="odom_frame_id"   value="$(arg third)/odom"/>
+      <arg name="base_frame_id"   value="$(arg third)/base_link"/>
+      <arg name="odom_topic" value="/$(arg third)/odom" />
+      <arg name="laser_topic" value="/$(arg third)/scan" />
+      <arg name="cmd_vel_topic" value="/$(arg third)/cmd_vel" />
+    </include>
+
+  </group>
+
+</launch>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>	
+
+	<!--start server -->
+	<node pkg="semantic_slam" type="cam_to_real.py" name= "cam_to_real"   />
+	<node pkg="semantic_slam" type="tf_broadcast.py" name= "tf_broadcast"   />
+    <!-- <node pkg="semantic_slam" type="tf_listener.py" name= "tf_listener"   /> -->
+
+</launch>

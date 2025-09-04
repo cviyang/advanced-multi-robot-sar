@@ -1,0 +1,103 @@
+<launch>
+  <!-- Arguments -->
+
+  <!--static-->
+  <arg name="first"  default="robot1"/>
+  <arg name="second"  default="robot2"/>
+  <arg name="third"  default="robot3"/>
+
+  <arg name="first_x_pos" default="-4.0"/>
+  <arg name="first_y_pos" default="-4.0"/>
+  <arg name="first_z_pos" default=" 0.0"/>
+ 
+  <arg name="second_x_pos" default="4.26"/>
+  <arg name="second_y_pos" default="-4.41"/>
+  <arg name="second_z_pos" default="0.0"/>
+ 
+  <arg name="third_x_pos" default="-4.0"/>
+  <arg name="third_y_pos" default="4.4"/>
+  <arg name="third_z_pos" default="0.0"/>
+
+  <!-- Map server -->
+  <arg name="map_file" default="$(find multi_bot_navigation)/maps/dyn.yaml"/>
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <group ns = "$(arg first)">
+    <!-- Map server -->
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+    <!-- AMCL -->
+    <include file="$(find multi_bot_navigation)/launch/multi_amcl.launch">
+      <arg name="global_frame_id" value="map"/>
+      <arg name="odom_frame_id"   value="$(arg first)/odom"/>
+      <arg name="base_frame_id"   value="$(arg first)/base_link"/> 
+      <arg name="initial_pose_x" value="$(arg first_x_pos)"/>
+      <arg name="initial_pose_y" value="$(arg first_y_pos)"/>
+      <arg name="initial_pose_a" value="$(arg first_z_pos)"/>
+    </include>
+
+    <!-- move_base -->
+    <include file="$(find multi_bot_navigation)/launch/multi_move_base.launch">
+      <arg name="global_frame_id" value="map"/>
+      <arg name="odom_frame_id"   value="$(arg first)/odom"/>
+      <arg name="base_frame_id"   value="$(arg first)/base_link"/>
+      <arg name="odom_topic" value="/$(arg first)/odom" />
+      <arg name="laser_topic" value="/$(arg first)/scan" />
+      <arg name="cmd_vel_topic" value="/$(arg first)/cmd_vel" />
+    </include>
+  </group>
+
+  <group ns = "$(arg second)">
+    <!-- Map server -->
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+    <!-- AMCL -->
+    <include file="$(find multi_bot_navigation)/launch/multi_amcl.launch">
+      <arg name="global_frame_id" value="map"/>
+      <arg name="odom_frame_id"   value="$(arg second)/odom"/>
+      <arg name="base_frame_id"   value="$(arg second)/base_link"/> 
+      <arg name="initial_pose_x" value="$(arg second_x_pos)"/>
+      <arg name="initial_pose_y" value="$(arg second_y_pos)"/>
+      <arg name="initial_pose_a" value="$(arg second_z_pos)"/>
+    </include>
+
+    <!-- move_base -->
+    <include file="$(find multi_bot_navigation)/launch/multi_move_base.launch">
+      <arg name="global_frame_id" value="map"/>
+      <arg name="odom_frame_id"   value="$(arg second)/odom"/>
+      <arg name="base_frame_id"   value="$(arg second)/base_link"/>
+      <arg name="odom_topic" value="/$(arg second)/odom" />
+      <arg name="laser_topic" value="/$(arg second)/scan" />
+      <arg name="cmd_vel_topic" value="/$(arg second)/cmd_vel" />
+    </include>
+  </group>
+
+  <group ns = "$(arg third)">
+    <!-- Map server -->
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+    <!-- AMCL -->
+    <include file="$(find multi_bot_navigation)/launch/multi_amcl.launch">
+      <arg name="global_frame_id" value="map"/>
+      <arg name="odom_frame_id"   value="$(arg third)/odom"/>
+      <arg name="base_frame_id"   value="$(arg third)/base_link"/> 
+      <arg name="initial_pose_x" value="$(arg third_x_pos)"/>
+      <arg name="initial_pose_y" value="$(arg third_y_pos)"/>
+      <arg name="initial_pose_a" value="$(arg third_z_pos)"/>
+    </include>
+
+    <!-- move_base -->
+    <include file="$(find multi_bot_navigation)/launch/multi_move_base.launch">
+      <arg name="global_frame_id" value="map"/>
+      <arg name="odom_frame_id"   value="$(arg third)/odom"/>
+      <arg name="base_frame_id"   value="$(arg third)/base_link"/>
+      <arg name="odom_topic" value="/$(arg third)/odom" />
+      <arg name="laser_topic" value="/$(arg third)/scan" />
+      <arg name="cmd_vel_topic" value="/$(arg third)/cmd_vel" />
+    </include>
+  </group>
+
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find multi_bot_navigation)/rviz/multi_bot_one_map.rviz"/>
+
+</launch>
